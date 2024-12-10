@@ -1,3 +1,4 @@
+import nltk.tokenize
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -5,97 +6,49 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException, TimeoutException
-import multiprocessing
+import nltk
+
+timeout = 5
 
 def main():
-    browsers = [setupBrowser(r'C:\Users\walrus\AppData\Roaming\Mozilla\Firefox\Profiles\9zb8tz51.default')]
-    newBrowser: multiprocessing.pool.AsyncResult
-    for i in range (0,10):
-        if i % 3 == 0:
-            pool = multiprocessing.Pool(processes=1) 
-            newBrowser = pool.apply_async(setupBrowser, args = (r'C:\Users\walrus\Desktop\QuillSmurfPY'))
-             
-        writeQB(browsers[0], "Hi darling, I think you're really pretty and cool." + str(i+1))
-        if (i+1) % 3 == 0:
-            WebDriverWait(browsers[0], 20).until(EC.visibility_of_element_located((By.XPATH, "//div[@id='root-client']/div/div[4]/div")))
-            browsers[0].quit()
-            del browsers[0]
-            browsers[newBrowser.get()]
-    WebDriverWait(browsers[0], 20).until(EC.visibility_of_element_located((By.XPATH, "//div[@id='root-client']/div/div[4]/div")))
-    browsers[0].quit()
+    nltk.download('punkt_tab')
+    print("Welcome to Quill Smurf!\n")
+    inputText = input("Enter text to paraphrase:")
+    inputTextArray = nltk.tokenize.sent_tokenize(inputText)
+    sortedInputTextArray = []
+    pSentence = inputTextArray[0]
+    i = 1
+    while i < len(inputTextArray):
+        if len(pSentence.split(" ")) + len(inputTextArray[i].split(" ")) < 125:
+            pSentence = pSentence + " " + inputTextArray[i]
+            i += 1
+        else:
+            sortedInputTextArray.append(pSentence)
+            pSentence = ""
+    sortedInputTextArray.append(pSentence)
+    print("This bot just saved you " + str(len(sortedInputTextArray)) + " copy and paste sequence(s).")
+    browser = setupBrowser()
+    for i in range (0,len(sortedInputTextArray)):
+        writeQB(browser, sortedInputTextArray[i])
+        if ((i+1) % 3 == 0) or (i == 9):
+            browser.quit()
+        if ((i+1) % 3 == 0):
+            browser = setupBrowser()
 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-#multithreading makes me really happy 
-def setupBrowser(profile):
+def setupBrowser():
     uOptions = Options()
-    #uOptions.add_argument("--headless")
     uOptions.add_argument("--window-size=1920,1200")
-    uOptions.add_argument("--profile")
-    uOptions.add_argument(profile)
+    #uOptions.add_argument("--headless")
     uOptions.set_preference("browser.download.folderList", 2)
-    uOptions.set_preference("browser.download.dir", "C:\\Users\walrus\Desktop\QuillSmurfPY")
+    uOptions.set_preference("browser.download.dir", "C:\\Users\\walrus\\Desktop\\QuillSmurfPY\\results")
     browser = webdriver.Firefox(options=uOptions)
     browser.get('https://quillbot.com/paraphrasing-tool')
-    loadQB(browser) 
+
+    WebDriverWait(browser, timeout).until(EC.visibility_of_element_located((By.XPATH, '//iframe[@title="Sign in with Google Dialog"]')))
+    browser.switch_to.frame(browser.find_element(By.XPATH,'//iframe[@title="Sign in with Google Dialog"]'))
+    browser.find_element(By.ID, "close").click()
+    browser.switch_to.parent_frame()
     return browser
-
-def loadQB(browser):
-    loadedIndicator = browser.find_element(By.XPATH, "//div[@id='root-client']/div[1]")
-    while (loadedIndicator.get_attribute("style") != "--header-height: 53px; --banner-height: 68px;"):
-        WebDriverWait(browser, 0.5)
-
-    try:
-        browser.switch_to.frame(browser.find_element(By.XPATH,'//iframe[@title="Sign in with Google Dialog"]'))
-        browser.find_element(By.ID, "close").click()
-        browser.switch_to.parent_frame()
-    except NoSuchElementException:
-        pass
 
 def writeQB(browser, text):
     input = browser.find_element(By.ID, "paraphraser-input-box")
@@ -103,21 +56,27 @@ def writeQB(browser, text):
     input.send_keys(Keys.DELETE)
     input.send_keys(text)  
 
-    pButton = WebDriverWait(browser, 20).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "button[data-testid='pphr/input_footer/paraphrase_button']")))
+    pButton = WebDriverWait(browser, timeout).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "button[data-testid='pphr/input_footer/paraphrase_button']")))
     while (not(EC.staleness_of(pButton)(browser))):
         pButton.click()
 
     refresh = False
     try:
-        while (WebDriverWait(browser, 20).until(EC.visibility_of_element_located((By.XPATH, "//button[@data-testid='pphr/input_footer/rephrase_button']"))).get_attribute("disabled") == "true"):
+        while (WebDriverWait(browser, timeout).until(EC.visibility_of_element_located((By.XPATH, "//button[@data-testid='pphr/input_footer/rephrase_button']"))).get_attribute("disabled") == "true"):
             WebDriverWait(browser, 0.5)
 
     except (StaleElementReferenceException, NoSuchElementException, TimeoutException) as e:
         pass
 
-    exportButton = WebDriverWait(browser,20).until(EC.visibility_of_element_located((By.XPATH, "//button[@data-testid='pphr/output_footer/export_button']")))
-    WebDriverWait(browser, 20).until(EC.element_to_be_clickable(exportButton))
+    exportButton = WebDriverWait(browser,timeout).until(EC.visibility_of_element_located((By.XPATH, "//button[@data-testid='pphr/output_footer/export_button']")))
+    WebDriverWait(browser, timeout).until(EC.element_to_be_clickable(exportButton))
     browser.execute_script("arguments[0].click();", exportButton)
+    
+    #Eventually, check if the file is in the results folder, don't use the janky QB indicator.
+    try:
+        WebDriverWait(browser, timeout).until(EC.visibility_of_element_located((By.XPATH, "//div[@id='root-client']/div/div[4]/div/div/div[2]/div/button"))).click()
+    except TimeoutException:
+        pass
 
 if __name__ == "__main__":
     main()
