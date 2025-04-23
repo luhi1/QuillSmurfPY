@@ -72,11 +72,15 @@ def main():
         elif ((i+1) % 3 == 0):
             browser.quit()
             browser = setupBrowser()
-    sortOutput()
     outputFile.close()
     
-def sortOutput(outputFile):
-    #TODO: Implement!
+def sortOutput(finalText, outputFile):
+    finalTextArray = nltk.tokenize.sent_tokenize(finalText)
+    for i in range(0, len(finalTextArray)):
+        outputFile.write(finalTextArray[i]+"\n")
+
+
+    
 def setupBrowser():
     uOptions = Options()
     #uOptions.add_argument("--headless")
@@ -133,9 +137,8 @@ def writeQB(browser, text, outputFile):
     input.send_keys(Keys.DELETE)
     input.send_keys(Keys.CONTROL + "v")
     finalText = input.text
-    
     print(finalText)
-    outputFile.write(finalText)
+    sortOutput(finalText, outputFile)
 
     
 if __name__ == "__main__":
