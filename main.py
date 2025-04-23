@@ -16,7 +16,7 @@ import os
 '''
 Install firefox first, latest version preferred. 
 
-
+pip install -U pyinstaller
 pip install nltk
 pip install selenium
 
@@ -30,6 +30,9 @@ tar -xvzf geckodriver-$GECKO_DRIVER_VERSION-$OS.tar.gz
 rm geckodriver-$GECKO_DRIVER_VERSION-$OS.tar.gz
 chmod +x geckodriver
 cp geckodriver /usr/local/bin/
+
+pyinstaller main.py
+./dist/main/main
 
 Info on non-linux install this will vary: https://selenium-python.readthedocs.io/installation.html#drivers
 '''
@@ -137,6 +140,7 @@ def writeQB(browser, text, outputFile):
     input.send_keys(Keys.DELETE)
     input.send_keys(Keys.CONTROL + "v")
     finalText = input.text
+
     print(finalText)
     sortOutput(finalText, outputFile)
 
