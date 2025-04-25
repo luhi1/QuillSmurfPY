@@ -10,32 +10,6 @@ import nltk
 import nltk.tokenize
 import os 
 
-#To Do:
-#Sort the final output to not just be on one line.
-
-'''
-Install firefox first, latest version preferred. 
-
-pip install -U pyinstaller
-pip install nltk
-pip install selenium
-
-Options : linux-aarch64, linux32, linux64
-Answer Based on: https://askubuntu.com/questions/870530/how-to-install-geckodriver-in-ubuntu
-
-export GECKO_DRIVER_VERSION='v0.36.0'
-export OS='INSERT OS NAME HERE'
-wget https://github.com/mozilla/geckodriver/releases/download/$GECKO_DRIVER_VERSION/geckodriver-$GECKO_DRIVER_VERSION-$OS.tar.gz
-tar -xvzf geckodriver-$GECKO_DRIVER_VERSION-$OS.tar.gz
-rm geckodriver-$GECKO_DRIVER_VERSION-$OS.tar.gz
-chmod +x geckodriver
-cp geckodriver /usr/local/bin/
-
-pyinstaller main.py
-./dist/main/main
-
-Info on non-linux install this will vary: https://selenium-python.readthedocs.io/installation.html#drivers
-'''
 def main():
     nltk.download('punkt_tab')
     print("Welcome to Quill Smurf!\n")
@@ -86,7 +60,7 @@ def sortOutput(finalText, outputFile):
     
 def setupBrowser():
     uOptions = Options()
-    #uOptions.add_argument("--headless")
+    uOptions.add_argument("--headless")
     browser = webdriver.Firefox(options=uOptions)
     browser.get('https://quillbot.com/paraphrasing-tool')
     loadQB(browser) 
