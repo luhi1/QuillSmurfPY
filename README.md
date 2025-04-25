@@ -18,7 +18,7 @@ Gif
 * Once your entire essay is inputted into the paraphraser, find the "quillSmurfOutput.txt" file in your output directory for the final result.
 # Installation
 ## 1. Necessary Dependencies 
-Currently, QuillSmurf only works with the Firefox browser. Our binary ***should*** work with most recent Firefox version (), however if any issues arise as new Firefox updates appear, we will recompile those as needed.
+Currently, QuillSmurf only works with the Firefox browser. Our binary ***should*** work with most recent Firefox version (tested up to v128.9.0esr), however if any issues arise as new Firefox updates appear, we will recompile those as needed.
 ## 2. Option A: Install Binaries (MOST USERS)
 1. Click on the releases tab.
 2. Download the source code .zip file.
