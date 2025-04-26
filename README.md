@@ -1,5 +1,5 @@
 # Welcome to **Quill Smurf**, paraphrasing simplified.
-Gif
+![Quill Smurf Showcase](QuillSmurf-Showcase.gif)
 # Features
 * One-click paraphase an essay of any length.
 * Select custom output directories.
